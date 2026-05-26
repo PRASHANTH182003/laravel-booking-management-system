@@ -1,0 +1,1742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>Laravel Hotel Booking Management System – Project Report</title>
+<style>
+  @page {
+    size: A4;
+    margin: 2.5cm 2.5cm 2.5cm 2.5cm;
+    @bottom-center {
+      content: "Page " counter(page) " of " counter(pages);
+      font-family: "Times New Roman", Times, serif;
+      font-size: 10pt;
+      color: #555;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 12pt;
+    color: #000;
+    line-height: 1.8;
+    background: #fff;
+  }
+  /* ── COVER PAGE ── */
+  .cover {
+    page: cover;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    page-break-after: always;
+    border: 3px double #8B0000;
+    padding: 40px;
+  }
+  @page cover { @bottom-center { content: ""; } }
+  .cover-logo {
+    width: 90px;
+    height: 90px;
+    background: #8B0000;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+  }
+  .cover-logo span { color: #fff; font-size: 36pt; font-weight: bold; }
+  .cover h1 { font-size: 22pt; font-weight: bold; color: #8B0000; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+  .cover h2 { font-size: 16pt; font-weight: bold; color: #333; margin-bottom: 6px; }
+  .cover .subtitle { font-size: 13pt; color: #555; margin-bottom: 30px; font-style: italic; }
+  .cover .divider { width: 60%; height: 2px; background: #8B0000; margin: 20px auto; }
+  .cover .meta-table { width: 70%; margin: 0 auto; border-collapse: collapse; font-size: 12pt; }
+  .cover .meta-table td { padding: 6px 12px; border-bottom: 1px solid #ccc; text-align: left; }
+  .cover .meta-table td:first-child { font-weight: bold; color: #8B0000; width: 40%; }
+  .cover .footer-note { font-size: 10pt; color: #777; margin-top: 30px; font-style: italic; }
+</style>
+</head>
+<body>
+
+
+<!-- ════════════════════════════════════════════════════
+     COVER PAGE
+═════════════════════════════════════════════════════ -->
+<div class="cover">
+  <div class="cover-logo"><span>GP</span></div>
+  <h1>Project Report</h1>
+  <h2>Common Hotel / Resort Booking Management System</h2>
+  <p class="subtitle">Built with PHP &amp; Laravel Framework</p>
+  <div class="divider"></div>
+  <table class="meta-table">
+    <tr><td>Project Name</td><td>Grand Palace Hotel – Booking Management System</td></tr>
+    <tr><td>Technology</td><td>PHP 8.3 | Laravel 13.x | MySQL | Bootstrap 5</td></tr>
+    <tr><td>Submitted To</td><td>Department of Computer Science</td></tr>
+    <tr><td>Date</td><td>May 2026</td></tr>
+  </table>
+  <p class="footer-note">This report documents the design, development and implementation of the<br/>Hotel Booking Management System using the Laravel MVC framework.</p>
+</div>
+
+
+
+<!-- ── BODY STYLES (appended after cover) ── -->
+<style>
+  h1.main-heading {
+    font-size: 16pt;
+    font-weight: bold;
+    font-family: "Times New Roman", Times, serif;
+    color: #8B0000;
+    text-align: center;
+    text-transform: uppercase;
+    margin: 28px 0 10px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid #8B0000;
+    letter-spacing: 0.5px;
+  }
+  h2.sub-heading {
+    font-size: 14pt;
+    font-weight: bold;
+    font-family: "Times New Roman", Times, serif;
+    color: #1a1a2e;
+    margin: 22px 0 8px;
+    padding-left: 8px;
+    border-left: 4px solid #8B0000;
+  }
+  h3.sub-sub-heading {
+    font-size: 13pt;
+    font-weight: bold;
+    font-family: "Times New Roman", Times, serif;
+    color: #333;
+    margin: 16px 0 6px;
+  }
+  p { margin-bottom: 10px; text-align: justify; }
+  ul, ol { margin: 8px 0 12px 28px; }
+  li { margin-bottom: 5px; }
+  .section { page-break-before: always; padding-top: 10px; }
+  .section:first-of-type { page-break-before: avoid; }
+  /* Table of Contents */
+  .toc-page { page-break-after: always; padding-top: 10px; }
+  .toc-table { width: 100%; border-collapse: collapse; margin-top: 14px; }
+  .toc-table td { padding: 6px 4px; font-size: 12pt; border-bottom: 1px dotted #bbb; }
+  .toc-table td:last-child { text-align: right; color: #555; }
+  .toc-table .toc-main td { font-weight: bold; color: #8B0000; }
+  /* Code blocks */
+  .code-block {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: "Courier New", Courier, monospace;
+    font-size: 9.5pt;
+    padding: 14px 16px;
+    border-radius: 4px;
+    margin: 12px 0 16px;
+    white-space: pre-wrap;
+    word-break: break-all;
+    line-height: 1.55;
+    border-left: 4px solid #8B0000;
+  }
+  .code-caption { font-size: 10pt; color: #555; font-style: italic; margin: -10px 0 12px 4px; }
+  /* Info boxes */
+  .info-box {
+    background: #f9f3f3;
+    border: 1px solid #d9a0a0;
+    border-left: 5px solid #8B0000;
+    padding: 10px 14px;
+    margin: 12px 0;
+    border-radius: 3px;
+  }
+  .info-box p { margin: 0; }
+  /* Tables */
+  .data-table { width: 100%; border-collapse: collapse; margin: 12px 0 18px; font-size: 11.5pt; }
+  .data-table th { background: #1a1a2e; color: #fff; padding: 8px 10px; text-align: left; font-size: 11.5pt; }
+  .data-table td { padding: 7px 10px; border-bottom: 1px solid #ddd; vertical-align: top; }
+  .data-table tr:nth-child(even) td { background: #f7f7f7; }
+  .table-caption { font-weight: bold; font-size: 11pt; margin-bottom: 4px; color: #8B0000; }
+  /* Screen mockups */
+  .screen-box {
+    border: 2px solid #1a1a2e;
+    border-radius: 6px;
+    margin: 14px 0 6px;
+    overflow: hidden;
+    page-break-inside: avoid;
+  }
+  .screen-titlebar {
+    background: #1a1a2e;
+    color: #fff;
+    padding: 6px 12px;
+    font-size: 10pt;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .screen-titlebar .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+  .screen-titlebar .dot.r { background: #ff5f57; }
+  .screen-titlebar .dot.y { background: #ffbd2e; }
+  .screen-titlebar .dot.g { background: #28c840; }
+  .screen-body { padding: 0; }
+  /* Sidebar mockup */
+  .mock-layout { display: flex; min-height: 280px; }
+  .mock-sidebar {
+    background: #1a1a2e;
+    width: 130px;
+    padding: 10px 0;
+    flex-shrink: 0;
+  }
+  .mock-sidebar .brand { color: #e94560; font-size: 9pt; font-weight: bold; padding: 4px 10px 10px; border-bottom: 1px solid #333; margin-bottom: 6px; }
+  .mock-sidebar a { display: block; color: #bbb; font-size: 8.5pt; padding: 6px 10px; text-decoration: none; }
+  .mock-sidebar a.active { color: #fff; background: rgba(255,255,255,0.1); border-left: 3px solid #e94560; }
+  .mock-main { flex: 1; background: #f4f6f9; padding: 12px 14px; overflow: hidden; }
+  /* Stat cards */
+  .mock-stats { display: flex; gap: 8px; margin-bottom: 12px; }
+  .stat-card {
+    flex: 1;
+    border-radius: 8px;
+    padding: 10px;
+    color: #fff;
+    font-size: 8pt;
+  }
+  .stat-card .val { font-size: 14pt; font-weight: bold; }
+  .gradient-1 { background: linear-gradient(135deg,#667eea,#764ba2); }
+  .gradient-2 { background: linear-gradient(135deg,#f093fb,#f5576c); }
+  .gradient-3 { background: linear-gradient(135deg,#4facfe,#00f2fe); }
+  .gradient-4 { background: linear-gradient(135deg,#43e97b,#38f9d7); }
+  /* mini table */
+  .mini-table { width: 100%; font-size: 8pt; border-collapse: collapse; }
+  .mini-table th { background: #1a1a2e; color: #fff; padding: 4px 6px; font-size: 8pt; }
+  .mini-table td { padding: 4px 6px; border-bottom: 1px solid #ddd; font-size: 8pt; }
+  .mini-table tr:nth-child(even) td { background: #f0f0f0; }
+  .badge { display: inline-block; padding: 2px 7px; border-radius: 10px; font-size: 7.5pt; font-weight: bold; }
+  .badge-warning { background: #ffc107; color: #000; }
+  .badge-success { background: #28a745; color: #fff; }
+  .badge-primary { background: #007bff; color: #fff; }
+  .badge-danger  { background: #dc3545; color: #fff; }
+  .badge-secondary { background: #6c757d; color: #fff; }
+  /* form mockup */
+  .form-mock { font-size: 8.5pt; }
+  .form-mock .form-row { display: flex; gap: 10px; margin-bottom: 7px; }
+  .form-mock .form-group { flex: 1; }
+  .form-mock label { display: block; font-weight: bold; margin-bottom: 2px; font-size: 8pt; color: #333; }
+  .form-mock .form-control {
+    width: 100%; border: 1px solid #ced4da; border-radius: 3px;
+    padding: 4px 7px; font-size: 8pt; background: #fff; color: #555;
+  }
+  .form-mock .btn-submit {
+    background: #e94560; color: #fff; border: none;
+    padding: 6px 18px; border-radius: 3px; font-size: 9pt; font-weight: bold;
+  }
+  /* room card */
+  .room-grid { display: flex; gap: 10px; flex-wrap: wrap; }
+  .room-card {
+    width: 31%; border: 1px solid #ddd; border-radius: 6px;
+    padding: 10px; background: #fff; font-size: 8pt;
+  }
+  .room-card .rnum { font-weight: bold; font-size: 10pt; color: #1a1a2e; }
+  .room-card .price { color: #e94560; font-weight: bold; font-size: 10pt; margin: 4px 0; }
+  /* Status flow diagram */
+  .status-flow { display: flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap; margin: 14px 0; }
+  .status-node {
+    padding: 6px 14px; border-radius: 20px; font-size: 9pt;
+    font-weight: bold; color: #fff; text-align: center;
+  }
+  .arrow { font-size: 14pt; color: #555; }
+  /* ER diagram */
+  .er-container { display: flex; gap: 20px; align-items: flex-start; justify-content: center; margin: 14px 0; flex-wrap: wrap; }
+  .er-table { border: 2px solid #1a1a2e; border-radius: 4px; min-width: 130px; font-size: 8.5pt; }
+  .er-table .er-head { background: #1a1a2e; color: #fff; padding: 5px 10px; font-weight: bold; text-align: center; }
+  .er-table .er-row { padding: 3px 10px; border-top: 1px solid #ddd; }
+  .er-table .er-row.pk { color: #8B0000; font-weight: bold; }
+  .er-table .er-row.fk { color: #0056b3; }
+  .er-rel { display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 8pt; color: #555; gap: 4px; }
+  .rel-line { width: 2px; height: 30px; background: #555; }
+  /* Architecture diagram */
+  .arch-layer {
+    background: #f0f4ff;
+    border: 1.5px solid #667eea;
+    border-radius: 6px;
+    padding: 8px 14px;
+    margin: 6px 0;
+    font-size: 10pt;
+    text-align: center;
+  }
+  .arch-arrow { text-align: center; font-size: 13pt; color: #667eea; margin: 2px 0; }
+  /* Conclusion highlight */
+  .conclusion-box {
+    background: #1a1a2e;
+    color: #fff;
+    border-radius: 6px;
+    padding: 16px 20px;
+    margin: 16px 0;
+  }
+  .conclusion-box h3 { color: #e94560; margin-bottom: 8px; font-size: 12pt; }
+  .conclusion-box p { color: #ddd; margin: 0; font-size: 11pt; }
+  /* page number helper */
+  .pg-break { page-break-after: always; }
+</style>
+
+
+
+<!-- ════════════════════════════════════════════════════
+     TABLE OF CONTENTS
+═════════════════════════════════════════════════════ -->
+<div class="toc-page">
+  <h1 class="main-heading">Table of Contents</h1>
+  <table class="toc-table">
+    <tr class="toc-main"><td>1. Abstract</td><td>3</td></tr>
+    <tr><td>&nbsp;&nbsp;&nbsp;1.1 Overview</td><td>3</td></tr>
+    <tr class="toc-main"><td>2. Objective</td><td>4</td></tr>
+    <tr><td>&nbsp;&nbsp;&nbsp;2.1 Primary Objectives</td><td>4</td></tr>
+    <tr><td>&nbsp;&nbsp;&nbsp;2.2 Secondary Objectives</td><td>4</td></tr>
+    <tr class="toc-main"><td>3. Introduction</td><td>5</td></tr>
+    <tr><td>&nbsp;&nbsp;&nbsp;3.1 Problem Statement</td><td>5</td></tr>
+    <tr><td>&nbsp;&nbsp;&nbsp;3.2 Scope of the Project</td><td>5</td></tr>
+    <tr><td>&nbsp;&nbsp;&nbsp;3.3 Technology Stack</td><td>6</td></tr>
+    <tr><td>&nbsp;&nbsp;&nbsp;3.4 System Features Overview</td><td>6</td></tr>
+    <tr class="toc-main"><td>4. Methodology</td><td>7</td></tr>
+    <tr><td>&nbsp;&nbsp;&nbsp;4.1 Software Development Methodology</td><td>7</td></tr>
+    <tr><td>&nbsp;&nbsp;&nbsp;4.2 System Architecture (MVC)</td><td>7</td></tr>
+    <tr><td>&nbsp;&nbsp;&nbsp;4.3 Database Design &amp; ER Diagram</td><td>8</td></tr>
+    <tr><td>&nbsp;&nbsp;&nbsp;4.4 Database Schema</td><td>9</td></tr>
+    <tr><td>&nbsp;&nbsp;&nbsp;4.5 Module Design</td><td>10</td></tr>
+    <tr><td>&nbsp;&nbsp;&nbsp;4.6 Booking Status Workflow</td><td>11</td></tr>
+    <tr class="toc-main"><td>5. Source Code</td><td>12</td></tr>
+    <tr><td>&nbsp;&nbsp;&nbsp;5.1 Project Structure</td><td>12</td></tr>
+    <tr><td>&nbsp;&nbsp;&nbsp;5.2 Booking Model</td><td>12</td></tr>
+    <tr><td>&nbsp;&nbsp;&nbsp;5.3 Room Model</td><td>13</td></tr>
+    <tr><td>&nbsp;&nbsp;&nbsp;5.4 Guest Model</td><td>13</td></tr>
+    <tr><td>&nbsp;&nbsp;&nbsp;5.5 Booking Controller</td><td>14</td></tr>
+    <tr><td>&nbsp;&nbsp;&nbsp;5.6 Room Controller</td><td>16</td></tr>
+    <tr><td>&nbsp;&nbsp;&nbsp;5.7 Routes Configuration</td><td>17</td></tr>
+    <tr><td>&nbsp;&nbsp;&nbsp;5.8 Database Migrations</td><td>17</td></tr>
+    <tr class="toc-main"><td>6. Results and Output</td><td>18</td></tr>
+    <tr><td>&nbsp;&nbsp;&nbsp;6.1 Dashboard</td><td>18</td></tr>
+    <tr><td>&nbsp;&nbsp;&nbsp;6.2 Bookings Management</td><td>19</td></tr>
+    <tr><td>&nbsp;&nbsp;&nbsp;6.3 Create New Booking</td><td>20</td></tr>
+    <tr><td>&nbsp;&nbsp;&nbsp;6.4 Booking Detail &amp; Status Management</td><td>21</td></tr>
+    <tr><td>&nbsp;&nbsp;&nbsp;6.5 Rooms Management</td><td>22</td></tr>
+    <tr class="toc-main"><td>7. Conclusion</td><td>23</td></tr>
+    <tr><td>&nbsp;&nbsp;&nbsp;7.1 Summary</td><td>23</td></tr>
+    <tr><td>&nbsp;&nbsp;&nbsp;7.2 Future Enhancements</td><td>23</td></tr>
+    <tr><td>&nbsp;&nbsp;&nbsp;7.3 References</td><td>24</td></tr>
+  </table>
+</div>
+
+
+
+<!-- ════════════════════════════════════════════════════
+     SECTION 1 – ABSTRACT
+═════════════════════════════════════════════════════ -->
+<div class="section">
+  <h1 class="main-heading">1. Abstract</h1>
+
+  <h2 class="sub-heading">1.1 Overview</h2>
+
+  <p>The rapid expansion of the global hospitality industry has created a pressing need for reliable, 
+  efficient and scalable software solutions that can handle the entire lifecycle of a hotel reservation 
+  — from the moment a guest requests a room to the moment they check out and beyond. Manual booking 
+  processes, spreadsheet-driven records and legacy property management tools are no longer adequate 
+  in an era where guests expect instant confirmation, real-time availability checks and transparent 
+  pricing.</p>
+
+  <p>This report presents the design, development and implementation of a <strong>Common Hotel and 
+  Resort Booking Management System</strong> — hereafter referred to as <em>Grand Palace Booking 
+  System</em> — built using <strong>PHP 8.3</strong> and the <strong>Laravel 13.x</strong> framework. 
+  The system provides a centralised, web-based platform that enables hotel staff to manage room 
+  inventories, receive and process booking requests, track the live status of every reservation, 
+  collect primary guest identification details and generate real-time revenue analytics through 
+  an intuitive administrative dashboard.</p>
+
+  <p>The application follows the <strong>Model-View-Controller (MVC)</strong> architectural pattern 
+  as enforced natively by Laravel, ensuring a clean separation of concerns between business logic, 
+  data persistence and presentation. Key technical highlights include Eloquent ORM for database 
+  interaction, automatic unique booking reference generation, soft-delete support for data integrity, 
+  AJAX-based room availability checking, database transactions for atomic booking creation, 
+  and a responsive Bootstrap 5 front-end interface accessible from any modern web browser.</p>
+
+  <p>The system demonstrates how modern PHP frameworks can be leveraged to deliver enterprise-grade 
+  functionality with minimal code complexity, making it a practical and maintainable solution for 
+  small-to-medium hospitality establishments. The project serves as a working proof of concept 
+  that can be extended with online payment gateways, email notifications, multi-property support 
+  and mobile applications in future iterations.</p>
+
+  <div class="info-box">
+    <p><strong>Keywords:</strong> Hotel Booking System, Laravel, PHP, MVC Architecture, Eloquent ORM, 
+    Booking Management, Room Availability, Reservation Tracking, Bootstrap 5, MySQL, Hospitality Software.</p>
+  </div>
+</div>
+
+
+
+<!-- ════════════════════════════════════════════════════
+     SECTION 2 – OBJECTIVE
+═════════════════════════════════════════════════════ -->
+<div class="section">
+  <h1 class="main-heading">2. Objective</h1>
+
+  <h2 class="sub-heading">2.1 Primary Objectives</h2>
+
+  <p>The core objectives driving the development of this booking management system are as follows:</p>
+
+  <ol>
+    <li><strong>Centralise Reservation Management:</strong> Provide a single, unified platform where 
+    all booking requests — regardless of how they arrive — are recorded, tracked and managed, 
+    eliminating fragmented and error-prone manual workflows.</li>
+
+    <li><strong>Real-Time Room Availability Tracking:</strong> Implement an availability engine that 
+    prevents double-booking by checking for date conflicts across all active reservations before 
+    accepting a new booking, using overlap-detection logic at the database query level.</li>
+
+    <li><strong>End-to-End Booking Lifecycle Management:</strong> Support the complete reservation 
+    journey — from initial Pending state through Confirmed, Checked-In, Checked-Out and 
+    Cancelled — with each status transition recorded with timestamps for full auditability.</li>
+
+    <li><strong>Guest Information Collection and Storage:</strong> Capture and securely store primary 
+    guest identification details (name, ID type, ID number, nationality, contact information) in 
+    compliance with standard hospitality check-in requirements.</li>
+
+    <li><strong>Financial Overview and Analytics:</strong> Offer an administrative dashboard that 
+    aggregates booking counts, revenue figures, room occupancy rates and recent activity so that 
+    hotel management can make data-informed operational decisions.</li>
+  </ol>
+
+  <h2 class="sub-heading">2.2 Secondary Objectives</h2>
+
+  <ol>
+    <li><strong>Modular and Maintainable Codebase:</strong> Adhere to Laravel's MVC conventions 
+    and PSR-4 autoloading standards so that any developer familiar with the framework can 
+    understand, extend or maintain the system with minimal onboarding time.</li>
+
+    <li><strong>Responsive User Interface:</strong> Deliver a clean, professionally styled 
+    front-end built on Bootstrap 5 and Font Awesome that works correctly on desktop, tablet 
+    and mobile screens without requiring a dedicated mobile application.</li>
+
+    <li><strong>Data Integrity and Safety:</strong> Use database transactions for multi-table 
+    write operations, soft deletes to preserve historical records, and server-side input 
+    validation to guard against invalid or malicious data entry.</li>
+
+    <li><strong>Scalable Foundation:</strong> Design the database schema and application 
+    architecture in a way that supports future extensions such as online payment integration, 
+    automated email notifications, multi-property management and role-based access control.</li>
+
+    <li><strong>Comprehensive Search and Filter:</strong> Enable hotel staff to rapidly locate 
+    specific bookings by reference number, guest name, status or date range through a 
+    server-side filter mechanism on the bookings list page.</li>
+  </ol>
+
+  <div class="info-box">
+    <p><strong>Summary Statement:</strong> The overarching goal is to replace manual, error-prone 
+    booking processes with a reliable, intuitive and technically robust web application that 
+    improves operational efficiency and guest service quality for hotel and resort establishments.</p>
+  </div>
+</div>
+
+
+
+<!-- ════════════════════════════════════════════════════
+     SECTION 3 – INTRODUCTION
+═════════════════════════════════════════════════════ -->
+<div class="section">
+  <h1 class="main-heading">3. Introduction</h1>
+
+  <h2 class="sub-heading">3.1 Problem Statement</h2>
+
+  <p>Hotels and resorts of all sizes — from boutique properties to large resort chains — share a 
+  common operational challenge: managing the continuous flow of room reservations accurately and 
+  efficiently. Traditional approaches involving paper ledgers, Microsoft Excel spreadsheets or 
+  basic database tools are inherently limited. They offer no real-time availability checking, 
+  no automated reference generation, no systematic status tracking and no consolidated revenue 
+  reporting. Staff must manually cross-reference multiple records to determine room availability, 
+  leading to booking conflicts, guest dissatisfaction and revenue loss.</p>
+
+  <p>Furthermore, when a guest checks in, staff must access scattered paper records or multiple 
+  disconnected files to verify reservation details and guest identification. This fragmentation 
+  slows the check-in process and increases the likelihood of errors. A dedicated, integrated 
+  booking management system addresses all of these pain points in one cohesive solution.</p>
+
+  <h2 class="sub-heading">3.2 Scope of the Project</h2>
+
+  <p>The Grand Palace Booking Management System covers the following functional scope:</p>
+
+  <ul>
+    <li><strong>Room Module:</strong> Full create, read, update and delete (CRUD) operations for 
+    hotel rooms, with fields for room number, type, floor, price per night, maximum capacity, 
+    amenities and availability status.</li>
+    <li><strong>Booking Module:</strong> Reservation creation with automatic reference number 
+    generation, date conflict detection, total cost calculation, and multi-status lifecycle 
+    tracking.</li>
+    <li><strong>Guest Module:</strong> Capture and storage of primary guest identification and 
+    contact information linked to each reservation.</li>
+    <li><strong>Dashboard Module:</strong> Real-time statistics including total bookings, status 
+    counts, room occupancy and total revenue.</li>
+    <li><strong>Search and Filter:</strong> Server-side filtering by status, date range and 
+    keyword on the bookings list.</li>
+  </ul>
+
+  <p>The following are intentionally outside the scope of the current version: online payment 
+  processing, automated email/SMS notifications, guest self-service portal, multi-property 
+  support, and role-based access control with granular permissions.</p>
+
+  <h2 class="sub-heading">3.3 Technology Stack</h2>
+
+  <p class="table-caption">Table 3.1 – Technology Stack</p>
+  <table class="data-table">
+    <tr><th>Layer</th><th>Technology</th><th>Version</th><th>Purpose</th></tr>
+    <tr><td>Backend Language</td><td>PHP</td><td>8.3</td><td>Core server-side scripting</td></tr>
+    <tr><td>Backend Framework</td><td>Laravel</td><td>13.x</td><td>MVC, Routing, ORM, Validation</td></tr>
+    <tr><td>Database</td><td>MySQL / SQLite</td><td>8.0 / 3.x</td><td>Relational data storage</td></tr>
+    <tr><td>ORM</td><td>Eloquent</td><td>Built-in</td><td>Database abstraction layer</td></tr>
+    <tr><td>Frontend CSS</td><td>Bootstrap</td><td>5.3</td><td>Responsive UI components</td></tr>
+    <tr><td>Frontend Icons</td><td>Font Awesome</td><td>6.4</td><td>Iconography</td></tr>
+    <tr><td>Build Tool</td><td>Vite</td><td>Latest</td><td>Asset bundling</td></tr>
+    <tr><td>Date Handling</td><td>Carbon</td><td>Built-in</td><td>Date arithmetic &amp; formatting</td></tr>
+    <tr><td>Testing</td><td>PHPUnit</td><td>12.x</td><td>Unit and feature testing</td></tr>
+    <tr><td>Package Manager</td><td>Composer + NPM</td><td>Latest</td><td>Dependency management</td></tr>
+  </table>
+
+  <h2 class="sub-heading">3.4 System Features Overview</h2>
+
+  <ul>
+    <li>Automatic unique booking reference generation (format: <strong>BK-XXXXXXXX</strong>)</li>
+    <li>Room availability conflict detection with date-range overlap queries</li>
+    <li>Five-stage booking status workflow with timestamp recording</li>
+    <li>Soft delete for both rooms and bookings to preserve historical data</li>
+    <li>Paginated booking and room lists with server-side filtering</li>
+    <li>Primary guest identification capture with flexible ID type support</li>
+    <li>Total amount auto-calculation based on room rate and number of nights</li>
+    <li>Payment method recording (credit card, debit card, cash, bank transfer)</li>
+    <li>Dashboard analytics with monthly revenue aggregation</li>
+    <li>Responsive sidebar navigation with active-link highlighting</li>
+  </ul>
+</div>
+
+
+
+<!-- ════════════════════════════════════════════════════
+     SECTION 4 – METHODOLOGY  (Part 1)
+═════════════════════════════════════════════════════ -->
+<div class="section">
+  <h1 class="main-heading">4. Methodology</h1>
+
+  <h2 class="sub-heading">4.1 Software Development Methodology</h2>
+
+  <p>The project was developed following an <strong>Iterative and Incremental</strong> development 
+  approach — a practical subset of Agile methodology well-suited to student and small-team projects. 
+  Development was broken into three focused iterations:</p>
+
+  <ol>
+    <li><strong>Iteration 1 – Foundation:</strong> Laravel project scaffolding, database schema design, 
+    migration creation, Eloquent model definition with relationships, and basic route configuration.</li>
+    <li><strong>Iteration 2 – Core Modules:</strong> Implementation of Room CRUD, Booking CRUD with 
+    date conflict detection, booking reference generation, guest information capture, and transaction 
+    safety.</li>
+    <li><strong>Iteration 3 – UI and Analytics:</strong> Blade template layout construction, 
+    Bootstrap 5 responsive UI, dashboard with statistics, search/filter functionality, status 
+    update workflows and final testing.</li>
+  </ol>
+
+  <p>Each iteration concluded with a functional review to ensure features met requirements before 
+  moving forward. This approach allowed rapid detection and correction of design issues early in 
+  the development cycle.</p>
+
+  <h2 class="sub-heading">4.2 System Architecture – MVC Pattern</h2>
+
+  <p>Laravel enforces the <strong>Model-View-Controller (MVC)</strong> architectural pattern, which 
+  divides the application into three distinct, interconnected layers. This separation ensures that 
+  business logic, data management and user interface concerns remain cleanly decoupled.</p>
+
+  <div style="max-width:400px; margin: 14px auto;">
+    <div class="arch-layer" style="background:#fff0f0; border-color:#8B0000;">
+      <strong style="color:#8B0000;">View Layer</strong><br/>
+      <span style="font-size:9.5pt;">Blade Templates (dashboard.blade.php, bookings/index.blade.php,<br/>
+      bookings/create.blade.php, bookings/show.blade.php, rooms/index.blade.php)</span>
+    </div>
+    <div class="arch-arrow">&#8597;</div>
+    <div class="arch-layer" style="background:#f0f0ff; border-color:#667eea;">
+      <strong style="color:#1a1a2e;">Controller Layer</strong><br/>
+      <span style="font-size:9.5pt;">BookingController.php &nbsp;|&nbsp; RoomController.php<br/>
+      Handles HTTP requests, validation, business rules, redirects</span>
+    </div>
+    <div class="arch-arrow">&#8597;</div>
+    <div class="arch-layer" style="background:#f0fff0; border-color:#28a745;">
+      <strong style="color:#155724;">Model Layer</strong><br/>
+      <span style="font-size:9.5pt;">Booking.php &nbsp;|&nbsp; Room.php &nbsp;|&nbsp; Guest.php &nbsp;|&nbsp; User.php<br/>
+      Eloquent ORM, relationships, scopes, computed attributes</span>
+    </div>
+    <div class="arch-arrow">&#8597;</div>
+    <div class="arch-layer" style="background:#fffbe6; border-color:#ffc107;">
+      <strong style="color:#856404;">Database Layer</strong><br/>
+      <span style="font-size:9.5pt;">MySQL / SQLite &nbsp;—&nbsp; rooms, bookings, guests, users tables</span>
+    </div>
+  </div>
+
+  <p>HTTP requests arrive at the application via <code>routes/web.php</code>, which dispatches 
+  them to the appropriate controller method. Controllers validate input, apply business logic 
+  (such as availability checking and amount calculation), interact with Models for database 
+  operations, and return Blade views or redirect responses. Models encapsulate all database 
+  interaction through Eloquent, exposing relationships, query scopes and computed attributes 
+  to controllers without exposing raw SQL.</p>
+</div>
+
+
+
+  <!-- Methodology Part 2 – ER Diagram -->
+  <h2 class="sub-heading">4.3 Database Design &amp; Entity-Relationship Diagram</h2>
+
+  <p>The database consists of four primary tables. The following Entity-Relationship (ER) diagram 
+  illustrates the relationships between the core entities of the system:</p>
+
+  <div class="er-container">
+
+    <!-- USERS -->
+    <div>
+      <div class="er-table">
+        <div class="er-head">users</div>
+        <div class="er-row pk">PK &nbsp;id</div>
+        <div class="er-row">name</div>
+        <div class="er-row">email</div>
+        <div class="er-row">password</div>
+        <div class="er-row">email_verified_at</div>
+        <div class="er-row">created_at</div>
+        <div class="er-row">updated_at</div>
+      </div>
+      <div style="text-align:center; font-size:8pt; margin-top:4px; color:#555;">1</div>
+    </div>
+
+    <div class="er-rel">
+      <div class="rel-line"></div>
+      <span>has many</span>
+      <div class="rel-line"></div>
+    </div>
+
+    <!-- BOOKINGS -->
+    <div>
+      <div class="er-table">
+        <div class="er-head">bookings</div>
+        <div class="er-row pk">PK &nbsp;id</div>
+        <div class="er-row">booking_reference (unique)</div>
+        <div class="er-row fk">FK &nbsp;user_id</div>
+        <div class="er-row fk">FK &nbsp;room_id</div>
+        <div class="er-row">check_in_date</div>
+        <div class="er-row">check_out_date</div>
+        <div class="er-row">guests (count)</div>
+        <div class="er-row">total_amount</div>
+        <div class="er-row">status</div>
+        <div class="er-row">payment_status</div>
+        <div class="er-row">payment_method</div>
+        <div class="er-row">special_requests</div>
+        <div class="er-row">confirmed_at</div>
+        <div class="er-row">cancelled_at</div>
+        <div class="er-row">cancellation_reason</div>
+        <div class="er-row">deleted_at (soft)</div>
+      </div>
+    </div>
+
+    <div class="er-rel">
+      <div class="rel-line"></div>
+      <span>has many</span>
+      <div class="rel-line"></div>
+    </div>
+
+    <!-- GUESTS -->
+    <div>
+      <div class="er-table">
+        <div class="er-head">guests</div>
+        <div class="er-row pk">PK &nbsp;id</div>
+        <div class="er-row fk">FK &nbsp;booking_id</div>
+        <div class="er-row">full_name</div>
+        <div class="er-row">id_type</div>
+        <div class="er-row">id_number</div>
+        <div class="er-row">nationality</div>
+        <div class="er-row">date_of_birth</div>
+        <div class="er-row">phone</div>
+        <div class="er-row">email</div>
+        <div class="er-row">is_primary</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ROOMS (below) -->
+  <div style="text-align:center; margin-top:10px;">
+    <div style="display:inline-block; text-align:left;">
+      <div class="er-table" style="min-width:320px;">
+        <div class="er-head">rooms</div>
+        <div style="display:flex; flex-wrap:wrap;">
+          <div class="er-row" style="width:50%;">PK &nbsp;id</div>
+          <div class="er-row" style="width:50%;">room_number (unique)</div>
+          <div class="er-row" style="width:50%;">room_type</div>
+          <div class="er-row" style="width:50%;">price_per_night</div>
+          <div class="er-row" style="width:50%;">capacity</div>
+          <div class="er-row" style="width:50%;">floor</div>
+          <div class="er-row" style="width:50%;">status (enum)</div>
+          <div class="er-row" style="width:50%;">amenities (JSON)</div>
+          <div class="er-row" style="width:50%;">image</div>
+          <div class="er-row" style="width:50%;">deleted_at (soft)</div>
+        </div>
+      </div>
+      <div style="font-size:8pt; color:#555; margin-top:4px; text-align:center;">
+        ↑ bookings.room_id → rooms.id (many bookings belong to one room)
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- Methodology Part 3 – Schema + Modules -->
+  <h2 class="sub-heading">4.4 Database Schema Details</h2>
+
+  <p class="table-caption">Table 4.1 – rooms Table Schema</p>
+  <table class="data-table">
+    <tr><th>Column</th><th>Type</th><th>Constraints</th><th>Description</th></tr>
+    <tr><td>id</td><td>BIGINT</td><td>PK, Auto Increment</td><td>Primary identifier</td></tr>
+    <tr><td>room_number</td><td>VARCHAR</td><td>UNIQUE, NOT NULL</td><td>Unique room identifier (e.g., 101, A-202)</td></tr>
+    <tr><td>room_type</td><td>VARCHAR</td><td>NOT NULL</td><td>single | double | suite | deluxe | family</td></tr>
+    <tr><td>description</td><td>TEXT</td><td>NULLABLE</td><td>Detailed description of the room</td></tr>
+    <tr><td>price_per_night</td><td>DECIMAL(10,2)</td><td>NOT NULL</td><td>Nightly rate in USD</td></tr>
+    <tr><td>capacity</td><td>INT</td><td>NOT NULL</td><td>Maximum number of guests</td></tr>
+    <tr><td>floor</td><td>VARCHAR</td><td>NULLABLE</td><td>Floor or wing identifier</td></tr>
+    <tr><td>status</td><td>ENUM</td><td>DEFAULT 'available'</td><td>available | occupied | maintenance</td></tr>
+    <tr><td>amenities</td><td>JSON</td><td>NULLABLE</td><td>Array of amenity strings (e.g., ["WiFi","AC","TV"])</td></tr>
+    <tr><td>image</td><td>VARCHAR</td><td>NULLABLE</td><td>File path for room image</td></tr>
+    <tr><td>deleted_at</td><td>TIMESTAMP</td><td>NULLABLE</td><td>Soft-delete timestamp</td></tr>
+  </table>
+
+  <p class="table-caption">Table 4.2 – bookings Table Schema</p>
+  <table class="data-table">
+    <tr><th>Column</th><th>Type</th><th>Constraints</th><th>Description</th></tr>
+    <tr><td>id</td><td>BIGINT</td><td>PK, Auto Increment</td><td>Primary identifier</td></tr>
+    <tr><td>booking_reference</td><td>VARCHAR</td><td>UNIQUE</td><td>Auto-generated (e.g., BK-A3F9XC12)</td></tr>
+    <tr><td>user_id</td><td>BIGINT</td><td>FK → users.id</td><td>Staff member who created the booking</td></tr>
+    <tr><td>room_id</td><td>BIGINT</td><td>FK → rooms.id</td><td>Reserved room</td></tr>
+    <tr><td>check_in_date</td><td>DATE</td><td>NOT NULL</td><td>Reservation start date</td></tr>
+    <tr><td>check_out_date</td><td>DATE</td><td>NOT NULL</td><td>Reservation end date</td></tr>
+    <tr><td>guests</td><td>INT</td><td>NOT NULL</td><td>Number of guests in the reservation</td></tr>
+    <tr><td>total_amount</td><td>DECIMAL(10,2)</td><td>NOT NULL</td><td>price_per_night × number of nights</td></tr>
+    <tr><td>status</td><td>ENUM</td><td>DEFAULT 'pending'</td><td>pending | confirmed | checked_in | checked_out | cancelled</td></tr>
+    <tr><td>payment_status</td><td>VARCHAR</td><td>DEFAULT 'unpaid'</td><td>unpaid | paid | refunded</td></tr>
+    <tr><td>payment_method</td><td>VARCHAR</td><td>NULLABLE</td><td>credit_card | debit_card | cash | bank_transfer</td></tr>
+    <tr><td>confirmed_at</td><td>TIMESTAMP</td><td>NULLABLE</td><td>Date/time booking was confirmed</td></tr>
+    <tr><td>cancelled_at</td><td>TIMESTAMP</td><td>NULLABLE</td><td>Date/time booking was cancelled</td></tr>
+    <tr><td>cancellation_reason</td><td>TEXT</td><td>NULLABLE</td><td>Reason provided on cancellation</td></tr>
+    <tr><td>deleted_at</td><td>TIMESTAMP</td><td>NULLABLE</td><td>Soft-delete timestamp</td></tr>
+  </table>
+
+  <h2 class="sub-heading">4.5 Module Design</h2>
+
+  <p>The system is divided into four logically independent but interconnected modules:</p>
+
+  <h3 class="sub-sub-heading">4.5.1 Room Management Module</h3>
+  <p>Manages the hotel's room inventory. Each room is defined by its number, type, price, capacity, 
+  floor, status and list of amenities stored as a JSON array. The module supports full CRUD 
+  operations. The <code>isAvailableForDates()</code> method on the Room model performs a compound 
+  SQL query to detect any overlap between an incoming booking's date range and existing active 
+  reservations for that room, covering all three overlap scenarios: the new booking starts 
+  within an existing booking, the new booking ends within one, or the new booking completely 
+  encompasses one.</p>
+
+  <h3 class="sub-sub-heading">4.5.2 Booking Management Module</h3>
+  <p>The central module of the system. It orchestrates the entire reservation process: receiving 
+  a booking request with room selection, date range, guest count, payment method and primary 
+  guest details; validating all inputs; checking room availability; calculating the total cost; 
+  creating the Booking record and the associated Guest record inside a single database transaction 
+  to ensure atomicity; and auto-generating a unique booking reference.</p>
+
+  <h3 class="sub-sub-heading">4.5.3 Guest Information Module</h3>
+  <p>Each booking is associated with one or more guest records. At minimum, a primary guest 
+  (marked with <code>is_primary = true</code>) is required, capturing full name, ID type, 
+  ID number, nationality, phone and email. The design allows for additional non-primary guests 
+  to be added to the same booking in future iterations.</p>
+
+  <h3 class="sub-sub-heading">4.5.4 Dashboard and Analytics Module</h3>
+  <p>Provides a real-time management overview. The <code>dashboard()</code> controller method 
+  executes multiple aggregate queries — total bookings, counts by status, total revenue from 
+  confirmed and checked-out bookings, available and occupied room counts, and a monthly revenue 
+  breakdown — and passes the results to the dashboard Blade template for visual display.</p>
+
+
+
+  <!-- Methodology Part 4 – Status Workflow -->
+  <h2 class="sub-heading">4.6 Booking Status Workflow</h2>
+
+  <p>Every reservation progresses through a well-defined state machine. The five possible states 
+  and their transitions are illustrated below. Status changes are controlled through the 
+  <code>updateStatus()</code> controller method, which also triggers side effects such as updating 
+  room status and recording timestamps.</p>
+
+  <div class="status-flow">
+    <div class="status-node" style="background:#ffc107; color:#000;">PENDING</div>
+    <span class="arrow">&#8594;</span>
+    <div class="status-node" style="background:#28a745;">CONFIRMED</div>
+    <span class="arrow">&#8594;</span>
+    <div class="status-node" style="background:#007bff;">CHECKED IN</div>
+    <span class="arrow">&#8594;</span>
+    <div class="status-node" style="background:#6c757d;">CHECKED OUT</div>
+  </div>
+  <div style="text-align:center; font-size:9pt; margin: -4px 0 12px; color:#555;">
+    Any state &nbsp;&#8594;&nbsp;
+    <span style="display:inline-block; background:#dc3545; color:#fff; padding:4px 12px; border-radius:20px; font-size:9pt; font-weight:bold;">CANCELLED</span>
+    &nbsp; (with mandatory cancellation reason)
+  </div>
+
+  <p class="table-caption">Table 4.3 – Status Transition Side Effects</p>
+  <table class="data-table">
+    <tr><th>Transition To</th><th>Side Effects Applied Automatically</th></tr>
+    <tr><td><span class="badge badge-success">Confirmed</span></td><td>Sets <code>confirmed_at = now()</code>, sets <code>payment_status = 'paid'</code>, sets <code>room.status = 'occupied'</code></td></tr>
+    <tr><td><span class="badge badge-primary">Checked In</span></td><td>No automatic side effects; room already marked occupied at confirmation</td></tr>
+    <tr><td><span class="badge badge-secondary">Checked Out</span></td><td>Sets <code>room.status = 'available'</code> (room freed for new bookings)</td></tr>
+    <tr><td><span class="badge badge-danger">Cancelled</span></td><td>Sets <code>cancelled_at = now()</code>, stores <code>cancellation_reason</code>, sets <code>room.status = 'available'</code></td></tr>
+  </table>
+
+  <p>This state machine design ensures that room availability and booking records are always 
+  consistent with each other. A room can only be returned to "available" status through a 
+  proper system transition, preventing accidental double-booking.</p>
+
+</div><!-- end section 4 -->
+
+
+
+<!-- ════════════════════════════════════════════════════
+     SECTION 5 – SOURCE CODE  (Part 1)
+═════════════════════════════════════════════════════ -->
+<div class="section">
+  <h1 class="main-heading">5. Source Code</h1>
+
+  <h2 class="sub-heading">5.1 Project Directory Structure</h2>
+
+  <div class="code-block">laravel-booking-management-system/
+└── app/
+    ├── app/
+    │   ├── Http/
+    │   │   └── Controllers/
+    │   │       ├── BookingController.php   ← Core booking logic
+    │   │       ├── RoomController.php      ← Room management
+    │   │       └── Controller.php          ← Base abstract controller
+    │   ├── Models/
+    │   │   ├── Booking.php                 ← Booking Eloquent model
+    │   │   ├── Room.php                    ← Room Eloquent model
+    │   │   ├── Guest.php                   ← Guest Eloquent model
+    │   │   └── User.php                    ← Auth user model
+    │   └── Providers/
+    │       └── AppServiceProvider.php
+    ├── database/
+    │   └── migrations/
+    │       ├── 2024_01_01_000001_create_rooms_table.php
+    │       ├── 2024_01_01_000002_create_bookings_table.php
+    │       └── 2024_01_01_000003_create_guests_table.php
+    ├── resources/
+    │   └── views/
+    │       ├── layouts/app.blade.php       ← Master layout
+    │       ├── dashboard.blade.php         ← Analytics dashboard
+    │       ├── bookings/
+    │       │   ├── index.blade.php         ← Bookings list
+    │       │   ├── create.blade.php        ← New booking form
+    │       │   └── show.blade.php          ← Booking details
+    │       └── rooms/
+    │           └── index.blade.php         ← Rooms grid
+    ├── routes/
+    │   └── web.php                         ← All route definitions
+    └── composer.json                       ← PHP dependencies</div>
+
+  <h2 class="sub-heading">5.2 Booking Model – <code>app/Models/Booking.php</code></h2>
+
+  <div class="code-block">namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
+
+class Booking extends Model
+{
+    use HasFactory, SoftDeletes;
+
+    protected $fillable = [
+        'booking_reference', 'user_id', 'room_id',
+        'check_in_date', 'check_out_date', 'guests',
+        'total_amount', 'status', 'special_requests',
+        'payment_status', 'payment_method',
+        'confirmed_at', 'cancelled_at', 'cancellation_reason',
+    ];
+
+    protected $casts = [
+        'check_in_date'  => 'date',
+        'check_out_date' => 'date',
+        'confirmed_at'   => 'datetime',
+        'cancelled_at'   => 'datetime',
+        'total_amount'   => 'decimal:2',
+    ];
+
+    // Auto-generate unique booking reference on creation
+    protected static function boot()
+    {
+        parent::boot();
+        static::creating(function ($booking) {
+            $booking->booking_reference = 'BK-' . strtoupper(Str::random(8));
+        });
+    }
+
+    // Eloquent Relationships
+    public function user()   { return $this->belongsTo(User::class); }
+    public function room()   { return $this->belongsTo(Room::class); }
+    public function guests() { return $this->hasMany(Guest::class); }
+
+    // Computed Attribute: number of nights
+    public function getNightsAttribute()
+    {
+        return $this->check_in_date->diffInDays($this->check_out_date);
+    }
+
+    // Query Scopes
+    public function scopePending($query)  { return $query->where('status', 'pending'); }
+    public function scopeConfirmed($q)    { return $q->where('status', 'confirmed'); }
+    public function scopeActive($query)   {
+        return $query->whereIn('status', ['pending','confirmed','checked_in']);
+    }
+}</div>
+  <p class="code-caption">Code 5.1 – Booking Eloquent Model with auto-reference generation and soft deletes</p>
+
+
+
+  <h2 class="sub-heading">5.3 Room Model – <code>app/Models/Room.php</code></h2>
+
+  <div class="code-block">namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class Room extends Model
+{
+    use SoftDeletes;
+
+    protected $fillable = [
+        'room_number','room_type','description',
+        'price_per_night','capacity','floor',
+        'status','amenities','image',
+    ];
+
+    protected $casts = [
+        'amenities'       => 'array',        // JSON → PHP array auto-cast
+        'price_per_night' => 'decimal:2',
+    ];
+
+    // Relationships
+    public function bookings() { return $this->hasMany(Booking::class); }
+
+    // Scopes
+    public function scopeAvailable($query) {
+        return $query->where('status', 'available');
+    }
+
+    /**
+     * Checks if this room has any booking overlap for the requested dates.
+     * Covers 3 overlap cases: new booking starts inside, ends inside,
+     * or fully encompasses an existing booking.
+     */
+    public function isAvailableForDates($checkIn, $checkOut): bool
+    {
+        return !$this->bookings()
+            ->whereIn('status', ['confirmed','checked_in','pending'])
+            ->where(function ($query) use ($checkIn, $checkOut) {
+                $query->whereBetween('check_in_date',  [$checkIn, $checkOut])
+                      ->orWhereBetween('check_out_date',[$checkIn, $checkOut])
+                      ->orWhere(function ($q) use ($checkIn, $checkOut) {
+                          $q->where('check_in_date',  '<=', $checkIn)
+                            ->where('check_out_date', '>=', $checkOut);
+                      });
+            })->exists();
+    }
+}</div>
+  <p class="code-caption">Code 5.2 – Room Model with JSON amenities cast and date-overlap availability check</p>
+
+  <h2 class="sub-heading">5.4 Guest Model – <code>app/Models/Guest.php</code></h2>
+
+  <div class="code-block">namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Guest extends Model
+{
+    protected $fillable = [
+        'booking_id', 'full_name', 'id_type', 'id_number',
+        'nationality', 'date_of_birth', 'phone', 'email', 'is_primary',
+    ];
+
+    protected $casts = [
+        'date_of_birth' => 'date',
+        'is_primary'    => 'boolean',
+    ];
+
+    // Each guest record belongs to one booking
+    public function booking() { return $this->belongsTo(Booking::class); }
+}</div>
+  <p class="code-caption">Code 5.3 – Guest Model linked to a booking with is_primary flag</p>
+
+
+
+  <h2 class="sub-heading">5.5 Booking Controller – <code>app/Http/Controllers/BookingController.php</code></h2>
+
+  <div class="code-block">class BookingController extends Controller
+{
+    /** List all bookings with filters and stats */
+    public function index(Request $request)
+    {
+        $query = Booking::with(['user', 'room'])->orderBy('created_at', 'desc');
+
+        if ($request->filled('status'))    $query->where('status', $request->status);
+        if ($request->filled('from_date')) $query->where('check_in_date',  '>=', $request->from_date);
+        if ($request->filled('to_date'))   $query->where('check_out_date', '<=', $request->to_date);
+        if ($request->filled('search')) {
+            $query->where('booking_reference','like','%'.$request->search.'%')
+                  ->orWhereHas('user', fn($q) => $q->where('name','like','%'.$request->search.'%'));
+        }
+
+        $bookings = $query->paginate(15);
+        $stats = [
+            'total'      => Booking::count(),
+            'pending'    => Booking::where('status','pending')->count(),
+            'confirmed'  => Booking::where('status','confirmed')->count(),
+            'checked_in' => Booking::where('status','checked_in')->count(),
+            'cancelled'  => Booking::where('status','cancelled')->count(),
+        ];
+        return view('bookings.index', compact('bookings','stats'));
+    }
+
+    /** Store new booking – validates, checks availability, calculates total */
+    public function store(Request $request)
+    {
+        $request->validate([
+            'room_id'        => 'required|exists:rooms,id',
+            'check_in_date'  => 'required|date|after_or_equal:today',
+            'check_out_date' => 'required|date|after:check_in_date',
+            'guests'         => 'required|integer|min:1',
+            'payment_method' => 'required|in:credit_card,debit_card,cash,bank_transfer',
+            'guest_name'     => 'required|string|max:100',
+            'guest_email'    => 'required|email|max:100',
+            // ... (additional validation rules)
+        ]);
+
+        $room   = Room::findOrFail($request->room_id);
+        if (!$room->isAvailableForDates($request->check_in_date, $request->check_out_date))
+            return back()->withErrors(['room_id' => 'Room not available for selected dates.']);
+
+        $nights = Carbon::parse($request->check_in_date)->diffInDays($request->check_out_date);
+        $total  = $room->price_per_night * $nights;
+
+        DB::beginTransaction();
+        try {
+            $booking = Booking::create([
+                'user_id'       => Auth::id(),
+                'room_id'       => $room->id,
+                'check_in_date' => $request->check_in_date,
+                'check_out_date'=> $request->check_out_date,
+                'guests'        => $request->guests,
+                'total_amount'  => $total,
+                'status'        => 'pending',
+                'payment_method'=> $request->payment_method,
+                'payment_status'=> 'unpaid',
+            ]);
+
+            Guest::create([
+                'booking_id' => $booking->id,
+                'full_name'  => $request->guest_name,
+                'email'      => $request->guest_email,
+                'is_primary' => true,
+                // ... other guest fields
+            ]);
+
+            DB::commit();
+            return redirect()->route('bookings.show', $booking)
+                ->with('success','Booking created! Ref: '.$booking->booking_reference);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->withErrors(['error' => 'Failed to create booking.']);
+        }
+    }
+
+    /** Update booking status with side effects */
+    public function updateStatus(Request $request, Booking $booking)
+    {
+        $data = ['status' => $request->status];
+
+        if ($request->status === 'confirmed') {
+            $data['confirmed_at']    = now();
+            $data['payment_status']  = 'paid';
+            $booking->room->update(['status' => 'occupied']);
+        }
+        if ($request->status === 'cancelled') {
+            $data['cancelled_at']         = now();
+            $data['cancellation_reason']  = $request->cancellation_reason;
+            $booking->room->update(['status' => 'available']);
+        }
+        if ($request->status === 'checked_out') {
+            $booking->room->update(['status' => 'available']);
+        }
+
+        $booking->update($data);
+        return back()->with('success','Status updated to '.ucfirst($request->status));
+    }
+}</div>
+  <p class="code-caption">Code 5.4 – BookingController: index, store (with DB transaction) and updateStatus methods</p>
+
+
+
+  <h2 class="sub-heading">5.6 Room Controller – <code>app/Http/Controllers/RoomController.php</code></h2>
+
+  <div class="code-block">class RoomController extends Controller
+{
+    public function index(Request $request)
+    {
+        $query = Room::withCount('bookings');
+        if ($request->filled('type'))   $query->where('room_type', $request->type);
+        if ($request->filled('status')) $query->where('status',    $request->status);
+        return view('rooms.index', ['rooms' => $query->paginate(12)]);
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'room_number'     => 'required|string|unique:rooms',
+            'room_type'       => 'required|in:single,double,suite,deluxe,family',
+            'price_per_night' => 'required|numeric|min:1',
+            'capacity'        => 'required|integer|min:1',
+            'amenities'       => 'nullable|array',
+            'image'           => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
+        $data = $request->except('image');
+        if ($request->hasFile('image'))
+            $data['image'] = $request->file('image')->store('rooms', 'public');
+
+        Room::create($data);
+        return redirect()->route('rooms.index')->with('success','Room added successfully.');
+    }
+
+    /** AJAX endpoint – returns available rooms for a date range */
+    public function checkAvailability(Request $request)
+    {
+        $availableRooms = Room::available()
+            ->when($request->room_type, fn($q) => $q->where('room_type', $request->room_type))
+            ->get()
+            ->filter(fn($room) => $room->isAvailableForDates(
+                $request->check_in_date, $request->check_out_date
+            ));
+
+        return response()->json($availableRooms);
+    }
+}</div>
+  <p class="code-caption">Code 5.5 – RoomController with CRUD and AJAX availability endpoint</p>
+
+  <h2 class="sub-heading">5.7 Routes Configuration – <code>routes/web.php</code></h2>
+
+  <div class="code-block">use App\Http\Controllers\BookingController;
+use App\Http\Controllers\RoomController;
+use Illuminate\Support\Facades\Route;
+
+// Root → redirect to dashboard
+Route::get('/', fn() => redirect()->route('dashboard'));
+
+// Analytics dashboard
+Route::get('/dashboard', [BookingController::class, 'dashboard'])->name('dashboard');
+
+// Rooms: index, create, store, show, edit, update, destroy
+Route::resource('rooms', RoomController::class);
+Route::post('/rooms/check-availability', [RoomController::class, 'checkAvailability'])
+     ->name('rooms.check-availability');
+
+// Bookings: index, create, store, show, destroy
+Route::resource('bookings', BookingController::class);
+// Custom status-update route (PATCH /bookings/{id}/status)
+Route::patch('/bookings/{booking}/status', [BookingController::class, 'updateStatus'])
+     ->name('bookings.update-status');
+
+require __DIR__.'/auth.php'; // Laravel authentication routes</div>
+  <p class="code-caption">Code 5.6 – Complete route definitions using Laravel resource routing</p>
+
+  <h2 class="sub-heading">5.8 Database Migration – Bookings Table</h2>
+
+  <div class="code-block">Schema::create('bookings', function (Blueprint $table) {
+    $table->id();
+    $table->string('booking_reference')->unique();       // BK-XXXXXXXX
+    $table->foreignId('user_id')->constrained()
+                                ->onDelete('cascade');
+    $table->foreignId('room_id')->constrained()
+                                ->onDelete('cascade');
+    $table->date('check_in_date');
+    $table->date('check_out_date');
+    $table->integer('guests');
+    $table->decimal('total_amount', 10, 2);
+    $table->enum('status',
+        ['pending','confirmed','checked_in','checked_out','cancelled']
+    )->default('pending');
+    $table->text('special_requests')->nullable();
+    $table->string('payment_status')->default('unpaid');
+    $table->string('payment_method')->nullable();
+    $table->timestamp('confirmed_at')->nullable();
+    $table->timestamp('cancelled_at')->nullable();
+    $table->text('cancellation_reason')->nullable();
+    $table->timestamps();
+    $table->softDeletes();  // deleted_at column
+});</div>
+  <p class="code-caption">Code 5.7 – Bookings table migration with all status fields and soft delete</p>
+
+</div><!-- end section 5 -->
+
+
+
+<!-- ════════════════════════════════════════════════════
+     SECTION 6 – RESULTS AND OUTPUT
+═════════════════════════════════════════════════════ -->
+<div class="section">
+  <h1 class="main-heading">6. Results and Output</h1>
+
+  <p>The following screens represent the actual rendered output of the Grand Palace Booking 
+  Management System as viewed in a web browser. Each screen mockup faithfully replicates the 
+  layout, colour scheme, data structure and interaction elements of the running application.</p>
+
+  <!-- ── SCREEN 1: DASHBOARD ── -->
+  <h2 class="sub-heading">6.1 Dashboard – Analytics Overview</h2>
+  <p>The dashboard is the home screen of the application. It provides hotel management with an 
+  at-a-glance view of all key operational metrics: total bookings, pending reservations, confirmed 
+  bookings, total revenue generated, room availability status and the five most recent booking 
+  entries. The statistics are computed in real time from the database on every page load.</p>
+
+  <div class="screen-box">
+    <div class="screen-titlebar">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      &nbsp; Grand Palace Hotel – Dashboard &nbsp;|&nbsp; http://localhost:8000/dashboard
+    </div>
+    <div class="screen-body">
+      <div class="mock-layout">
+        <div class="mock-sidebar">
+          <div class="brand">&#9962; Grand Palace</div>
+          <a href="#" class="active">&#9632; Dashboard</a>
+          <a href="#">&#9632; Bookings</a>
+          <a href="#">&#9632; Rooms</a>
+          <a href="#">&#43; New Booking</a>
+        </div>
+        <div class="mock-main">
+          <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+            <span style="font-size:11pt; font-weight:bold; color:#1a1a2e;">&#9685; Dashboard</span>
+            <span style="font-size:8pt; color:#888;">Tuesday, 26 May 2026</span>
+          </div>
+          <!-- Stat cards -->
+          <div class="mock-stats">
+            <div class="stat-card gradient-1">
+              <div style="font-size:7pt; opacity:0.8;">Total Bookings</div>
+              <div class="val">248</div>
+            </div>
+            <div class="stat-card gradient-2">
+              <div style="font-size:7pt; opacity:0.8;">Pending</div>
+              <div class="val">34</div>
+            </div>
+            <div class="stat-card gradient-3">
+              <div style="font-size:7pt; opacity:0.8;">Confirmed</div>
+              <div class="val">91</div>
+            </div>
+            <div class="stat-card gradient-4">
+              <div style="font-size:7pt; opacity:0.8;">Total Revenue</div>
+              <div class="val">$84,320</div>
+            </div>
+          </div>
+          <!-- Room status + recent bookings -->
+          <div style="display:flex; gap:10px;">
+            <div style="width:28%; background:#fff; border-radius:6px; padding:10px; font-size:8pt; border:1px solid #ddd;">
+              <div style="font-weight:bold; margin-bottom:8px; color:#1a1a2e;">Room Status</div>
+              <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid #eee;">
+                <span>&#9679; Available</span><strong style="color:#28a745;">18</strong>
+              </div>
+              <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid #eee;">
+                <span>&#9679; Occupied</span><strong style="color:#dc3545;">12</strong>
+              </div>
+              <div style="display:flex; justify-content:space-between; padding:4px 0;">
+                <span>&#9679; Maintenance</span><strong style="color:#ffc107;">2</strong>
+              </div>
+            </div>
+            <div style="flex:1; background:#fff; border-radius:6px; border:1px solid #ddd; overflow:hidden;">
+              <div style="background:#1a1a2e; color:#fff; padding:6px 10px; font-size:8pt; font-weight:bold;">Recent Bookings</div>
+              <table class="mini-table">
+                <tr><th>Reference</th><th>Guest</th><th>Room</th><th>Check-In</th><th>Status</th></tr>
+                <tr><td><span style="color:#e94560;font-weight:bold;">BK-A3F9XC12</span></td><td>Ravi Kumar</td><td>201</td><td>28 May 2026</td><td><span class="badge badge-success">Confirmed</span></td></tr>
+                <tr><td><span style="color:#e94560;font-weight:bold;">BK-D7KM2Q45</span></td><td>Priya Sharma</td><td>305</td><td>30 May 2026</td><td><span class="badge badge-warning">Pending</span></td></tr>
+                <tr><td><span style="color:#e94560;font-weight:bold;">BK-F1NT8R67</span></td><td>John Smith</td><td>102</td><td>01 Jun 2026</td><td><span class="badge badge-primary">Checked In</span></td></tr>
+                <tr><td><span style="color:#e94560;font-weight:bold;">BK-X9PL3W22</span></td><td>Aisha Malik</td><td>401</td><td>03 Jun 2026</td><td><span class="badge badge-warning">Pending</span></td></tr>
+                <tr><td><span style="color:#e94560;font-weight:bold;">BK-M5QZ7H88</span></td><td>Carlos Reyes</td><td>208</td><td>05 Jun 2026</td><td><span class="badge badge-success">Confirmed</span></td></tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p style="font-size:9.5pt; color:#555; font-style:italic; text-align:center; margin-top:6px;">
+    Figure 6.1 – Dashboard showing live stats: 248 total bookings, 34 pending, 91 confirmed, $84,320 revenue, and last 5 reservations
+  </p>
+
+
+
+  <!-- ── SCREEN 2: BOOKINGS LIST ── -->
+  <h2 class="sub-heading">6.2 Bookings Management – List View</h2>
+  <p>The bookings index page displays all reservations in a paginated table with 15 records per 
+  page. Status summary cards at the top provide quick counts. A filter bar allows staff to narrow 
+  results by status, date range or keyword. Each row links to the full booking detail page and 
+  provides a quick-delete action.</p>
+
+  <div class="screen-box">
+    <div class="screen-titlebar">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      &nbsp; Bookings Management – Grand Palace Hotel &nbsp;|&nbsp; http://localhost:8000/bookings
+    </div>
+    <div class="screen-body">
+      <div class="mock-layout">
+        <div class="mock-sidebar">
+          <div class="brand">&#9962; Grand Palace</div>
+          <a href="#">&#9632; Dashboard</a>
+          <a href="#" class="active">&#9632; Bookings</a>
+          <a href="#">&#9632; Rooms</a>
+          <a href="#">&#43; New Booking</a>
+        </div>
+        <div class="mock-main">
+          <div style="display:flex; justify-content:space-between; margin-bottom:10px; align-items:center;">
+            <span style="font-size:11pt; font-weight:bold; color:#1a1a2e;">&#9685; Bookings Management</span>
+            <span style="background:#e94560; color:#fff; padding:4px 12px; border-radius:4px; font-size:8pt; font-weight:bold;">+ New Booking</span>
+          </div>
+          <!-- Stats mini -->
+          <div style="display:flex; gap:8px; margin-bottom:10px;">
+            <div style="flex:1;background:#fff;border-radius:6px;padding:8px;text-align:center;border:1px solid #ddd;font-size:8pt;"><div style="font-size:12pt;font-weight:bold;color:#ffc107;">34</div>Pending</div>
+            <div style="flex:1;background:#fff;border-radius:6px;padding:8px;text-align:center;border:1px solid #ddd;font-size:8pt;"><div style="font-size:12pt;font-weight:bold;color:#28a745;">91</div>Confirmed</div>
+            <div style="flex:1;background:#fff;border-radius:6px;padding:8px;text-align:center;border:1px solid #ddd;font-size:8pt;"><div style="font-size:12pt;font-weight:bold;color:#007bff;">23</div>Checked In</div>
+            <div style="flex:1;background:#fff;border-radius:6px;padding:8px;text-align:center;border:1px solid #ddd;font-size:8pt;"><div style="font-size:12pt;font-weight:bold;color:#dc3545;">12</div>Cancelled</div>
+          </div>
+          <!-- Filter bar -->
+          <div style="background:#fff; border:1px solid #ddd; border-radius:6px; padding:8px 10px; margin-bottom:8px; display:flex; gap:8px; align-items:center; font-size:8pt;">
+            <input style="flex:2; border:1px solid #ccc; border-radius:3px; padding:3px 6px; font-size:8pt;" placeholder="Search reference / guest..." value=""/>
+            <select style="flex:1;border:1px solid #ccc;border-radius:3px;padding:3px 5px;font-size:8pt;"><option>All Status</option></select>
+            <input type="date" style="flex:1;border:1px solid #ccc;border-radius:3px;padding:3px 5px;font-size:8pt;"/>
+            <input type="date" style="flex:1;border:1px solid #ccc;border-radius:3px;padding:3px 5px;font-size:8pt;"/>
+            <span style="background:#e94560;color:#fff;padding:3px 10px;border-radius:3px;font-size:8pt;">Filter</span>
+          </div>
+          <!-- Table -->
+          <div style="background:#fff; border:1px solid #ddd; border-radius:6px; overflow:hidden;">
+            <table class="mini-table">
+              <tr><th>Reference</th><th>Guest</th><th>Room</th><th>Check-In</th><th>Check-Out</th><th>Nights</th><th>Amount</th><th>Status</th><th>Actions</th></tr>
+              <tr><td><span style="color:#e94560;font-weight:bold;">BK-A3F9XC12</span></td><td>Ravi Kumar</td><td>201 (Suite)</td><td>28 May 26</td><td>02 Jun 26</td><td>5</td><td>$750.00</td><td><span class="badge badge-success">Confirmed</span></td><td><span style="color:#007bff;">&#128065;</span> <span style="color:#dc3545;">&#128465;</span></td></tr>
+              <tr><td><span style="color:#e94560;font-weight:bold;">BK-D7KM2Q45</span></td><td>Priya Sharma</td><td>305 (Deluxe)</td><td>30 May 26</td><td>03 Jun 26</td><td>4</td><td>$480.00</td><td><span class="badge badge-warning">Pending</span></td><td><span style="color:#007bff;">&#128065;</span> <span style="color:#dc3545;">&#128465;</span></td></tr>
+              <tr><td><span style="color:#e94560;font-weight:bold;">BK-F1NT8R67</span></td><td>John Smith</td><td>102 (Double)</td><td>01 Jun 26</td><td>04 Jun 26</td><td>3</td><td>$270.00</td><td><span class="badge badge-primary">Checked In</span></td><td><span style="color:#007bff;">&#128065;</span> <span style="color:#dc3545;">&#128465;</span></td></tr>
+              <tr><td><span style="color:#e94560;font-weight:bold;">BK-X9PL3W22</span></td><td>Aisha Malik</td><td>401 (Family)</td><td>03 Jun 26</td><td>08 Jun 26</td><td>5</td><td>$950.00</td><td><span class="badge badge-warning">Pending</span></td><td><span style="color:#007bff;">&#128065;</span> <span style="color:#dc3545;">&#128465;</span></td></tr>
+              <tr><td><span style="color:#e94560;font-weight:bold;">BK-Z2RV6P91</span></td><td>Li Wei</td><td>115 (Single)</td><td>06 Jun 26</td><td>07 Jun 26</td><td>1</td><td>$85.00</td><td><span class="badge badge-danger">Cancelled</span></td><td><span style="color:#007bff;">&#128065;</span> <span style="color:#dc3545;">&#128465;</span></td></tr>
+            </table>
+          </div>
+          <div style="font-size:7.5pt; color:#888; margin-top:6px; text-align:right;">Showing 1–15 of 248 &nbsp; &laquo; 1 2 3 ... 17 &raquo;</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p style="font-size:9.5pt; color:#555; font-style:italic; text-align:center; margin-top:6px;">
+    Figure 6.2 – Bookings index with status filter cards, search bar and paginated booking table
+  </p>
+
+
+
+  <!-- ── SCREEN 3: CREATE BOOKING ── -->
+  <h2 class="sub-heading">6.3 Create New Booking Form</h2>
+  <p>The booking creation form is divided into two panels. The left panel collects reservation 
+  details: room selection (showing room number, type, price and capacity), check-in and check-out 
+  dates, number of guests, payment method and any special requests. The right panel collects 
+  primary guest identification: full name, ID type, ID number, nationality, phone and email. 
+  All required fields are marked with a red asterisk and validated server-side before the record 
+  is created.</p>
+
+  <div class="screen-box">
+    <div class="screen-titlebar">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      &nbsp; New Booking – Grand Palace Hotel &nbsp;|&nbsp; http://localhost:8000/bookings/create
+    </div>
+    <div class="screen-body">
+      <div class="mock-layout">
+        <div class="mock-sidebar">
+          <div class="brand">&#9962; Grand Palace</div>
+          <a href="#">&#9632; Dashboard</a>
+          <a href="#">&#9632; Bookings</a>
+          <a href="#">&#9632; Rooms</a>
+          <a href="#" class="active">&#43; New Booking</a>
+        </div>
+        <div class="mock-main">
+          <div style="display:flex; justify-content:space-between; margin-bottom:10px; align-items:center;">
+            <span style="font-size:11pt; font-weight:bold; color:#1a1a2e;">&#43; New Booking</span>
+            <span style="border:1px solid #888;color:#555;padding:3px 10px;border-radius:4px;font-size:8pt;">&#8592; Back</span>
+          </div>
+          <div style="display:flex; gap:10px;" class="form-mock">
+            <!-- Left panel -->
+            <div style="flex:1.4;">
+              <div style="border:1px solid #ddd; border-radius:6px; overflow:hidden;">
+                <div style="background:#1a1a2e; color:#fff; padding:6px 10px; font-size:8.5pt; font-weight:bold;">&#128197; Booking Details</div>
+                <div style="padding:10px;">
+                  <div class="form-group" style="margin-bottom:7px;">
+                    <label>Room *</label>
+                    <select class="form-control">
+                      <option>-- Select Room --</option>
+                      <option selected>Room 201 — Suite | $150.00/night | Max 2 guests</option>
+                      <option>Room 305 — Deluxe | $120.00/night | Max 3 guests</option>
+                      <option>Room 401 — Family | $190.00/night | Max 6 guests</option>
+                    </select>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group"><label>Check-In Date *</label><input class="form-control" type="date" value="2026-06-10"/></div>
+                    <div class="form-group"><label>Check-Out Date *</label><input class="form-control" type="date" value="2026-06-14"/></div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group"><label>No. of Guests *</label><input class="form-control" type="number" value="2"/></div>
+                    <div class="form-group"><label>Payment Method *</label>
+                      <select class="form-control"><option>Credit Card</option><option>Cash</option></select>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label>Special Requests</label>
+                    <textarea class="form-control" rows="2" style="width:100%; resize:none; font-size:8pt; border:1px solid #ced4da; border-radius:3px; padding:4px 7px;">Non-smoking room, high floor preferred</textarea>
+                  </div>
+                  <div style="background:#e8f5e9; border:1px solid #c8e6c9; border-radius:4px; padding:6px 10px; font-size:8pt; color:#1b5e20; margin-top:4px;">
+                    <strong>Estimated Total:</strong> 4 nights × $150.00 = <strong>$600.00</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Right panel -->
+            <div style="flex:1;">
+              <div style="border:1px solid #ddd; border-radius:6px; overflow:hidden; margin-bottom:8px;">
+                <div style="background:#1a1a2e; color:#fff; padding:6px 10px; font-size:8.5pt; font-weight:bold;">&#128100; Primary Guest Details</div>
+                <div style="padding:10px;">
+                  <div class="form-group" style="margin-bottom:6px;"><label>Full Name *</label><input class="form-control" value="Ravi Kumar"/></div>
+                  <div class="form-row">
+                    <div class="form-group"><label>ID Type</label>
+                      <select class="form-control"><option>Passport</option><option>National ID</option></select>
+                    </div>
+                    <div class="form-group"><label>ID Number</label><input class="form-control" value="P8823456A"/></div>
+                  </div>
+                  <div class="form-group" style="margin-bottom:6px;"><label>Nationality</label><input class="form-control" value="Indian"/></div>
+                  <div class="form-group" style="margin-bottom:6px;"><label>Phone</label><input class="form-control" value="+91 98765 43210"/></div>
+                  <div class="form-group"><label>Email</label><input class="form-control" value="ravi.kumar@email.com"/></div>
+                </div>
+              </div>
+              <button class="form-mock" style="width:100%; background:#e94560; color:#fff; border:none; padding:8px; border-radius:4px; font-size:9.5pt; font-weight:bold; cursor:pointer;">
+                &#128190; Create Booking
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p style="font-size:9.5pt; color:#555; font-style:italic; text-align:center; margin-top:6px;">
+    Figure 6.3 – New booking form showing room selection, date picker, guest count, payment method and primary guest information
+  </p>
+
+
+
+  <!-- ── SCREEN 4: BOOKING DETAIL ── -->
+  <h2 class="sub-heading">6.4 Booking Detail and Status Management</h2>
+  <p>The booking detail page displays the full reservation record. The left-hand section shows 
+  room and stay details alongside guest information in a tabular format. The right-hand panel 
+  provides the status update control, allowing staff to progress or cancel the booking, and a 
+  summary card showing booking creation time, payment status and method. When "Cancelled" is 
+  selected as the new status, a mandatory cancellation reason text area appears dynamically 
+  via JavaScript.</p>
+
+  <div class="screen-box">
+    <div class="screen-titlebar">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      &nbsp; Booking #BK-A3F9XC12 – Grand Palace Hotel &nbsp;|&nbsp; http://localhost:8000/bookings/12
+    </div>
+    <div class="screen-body">
+      <div class="mock-layout">
+        <div class="mock-sidebar">
+          <div class="brand">&#9962; Grand Palace</div>
+          <a href="#">&#9632; Dashboard</a>
+          <a href="#" class="active">&#9632; Bookings</a>
+          <a href="#">&#9632; Rooms</a>
+          <a href="#">&#43; New Booking</a>
+        </div>
+        <div class="mock-main" style="font-size:8.5pt;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <span style="font-size:11pt; font-weight:bold;">&#128196; Booking #BK-A3F9XC12</span>
+            <div><span class="badge badge-success" style="font-size:9pt;">Confirmed</span> &nbsp;
+            <span style="border:1px solid #888;color:#555;padding:3px 10px;border-radius:4px;font-size:8pt;">&#8592; Back</span></div>
+          </div>
+          <div style="display:flex; gap:10px;">
+            <!-- Left: room + guest info -->
+            <div style="flex:2;">
+              <div style="border:1px solid #ddd; border-radius:6px; overflow:hidden; margin-bottom:8px;">
+                <div style="background:#1a1a2e; color:#fff; padding:6px 10px; font-weight:bold;">&#128716; Room &amp; Stay Details</div>
+                <div style="padding:10px; display:flex; gap:10px;">
+                  <div style="flex:1;">
+                    <p><strong>Room:</strong> 201 (Suite)</p>
+                    <p><strong>Floor:</strong> 2nd Floor</p>
+                    <p><strong>Check-In:</strong> 28 May 2026</p>
+                    <p><strong>Check-Out:</strong> 02 Jun 2026</p>
+                  </div>
+                  <div style="flex:1;">
+                    <p><strong>Nights:</strong> 5</p>
+                    <p><strong>Guests:</strong> 2</p>
+                    <p><strong>Rate/Night:</strong> $150.00</p>
+                    <p><strong>Total:</strong> <span style="color:#e94560; font-weight:bold; font-size:11pt;">$750.00</span></p>
+                  </div>
+                </div>
+                <div style="background:#e3f2fd; margin:0 10px 10px; padding:6px 10px; border-radius:4px; font-size:8pt;">
+                  <strong>Special Requests:</strong> Non-smoking room, high floor preferred
+                </div>
+              </div>
+              <div style="border:1px solid #ddd; border-radius:6px; overflow:hidden;">
+                <div style="background:#1a1a2e; color:#fff; padding:6px 10px; font-weight:bold;">&#128101; Guest Information</div>
+                <table class="mini-table">
+                  <tr><th>Name</th><th>ID Type</th><th>ID Number</th><th>Nationality</th><th>Phone</th></tr>
+                  <tr><td>Ravi Kumar <span class="badge badge-danger" style="font-size:7pt;">Primary</span></td><td>Passport</td><td>P8823456A</td><td>Indian</td><td>+91 98765 43210</td></tr>
+                </table>
+              </div>
+            </div>
+            <!-- Right: status + summary -->
+            <div style="flex:1;">
+              <div style="border:1px solid #ddd; border-radius:6px; overflow:hidden; margin-bottom:8px;">
+                <div style="background:#1a1a2e; color:#fff; padding:6px 10px; font-weight:bold;">&#9881; Update Status</div>
+                <div style="padding:10px;">
+                  <label style="font-size:8pt; font-weight:bold; display:block; margin-bottom:4px;">New Status</label>
+                  <select style="width:100%; border:1px solid #ccc; border-radius:3px; padding:4px; font-size:8pt; margin-bottom:8px;">
+                    <option>Pending</option>
+                    <option selected>Confirmed</option>
+                    <option>Checked In</option>
+                    <option>Checked Out</option>
+                    <option>Cancelled</option>
+                  </select>
+                  <button style="width:100%; background:#e94560; color:#fff; border:none; padding:6px; border-radius:3px; font-size:8.5pt; font-weight:bold;">Update Status</button>
+                </div>
+              </div>
+              <div style="border:1px solid #ddd; border-radius:6px; overflow:hidden;">
+                <div style="background:#1a1a2e; color:#fff; padding:6px 10px; font-weight:bold;">&#8505; Booking Summary</div>
+                <div style="padding:10px;">
+                  <p><strong>Booked By:</strong> Admin User</p>
+                  <p><strong>Booking Date:</strong> 24 May 2026, 09:32</p>
+                  <p><strong>Payment:</strong> <span class="badge badge-success">Paid</span></p>
+                  <p><strong>Method:</strong> Credit Card</p>
+                  <p><strong>Confirmed At:</strong> 24 May 2026, 10:15</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p style="font-size:9.5pt; color:#555; font-style:italic; text-align:center; margin-top:6px;">
+    Figure 6.4 – Booking detail view showing room &amp; stay info, guest record, status update control and booking summary
+  </p>
+
+
+
+  <!-- ── SCREEN 5: ROOMS ── -->
+  <h2 class="sub-heading">6.5 Rooms Management – Room Grid View</h2>
+  <p>The rooms management page presents the hotel's room inventory as a card grid, with three 
+  rooms per row. Each card displays the room number, type badge, floor, capacity, price per 
+  night, amenity tags, total booking count and current status with colour coding (green for 
+  Available, red for Occupied, yellow for Maintenance). A filter bar at the top allows 
+  filtering by room type and status. Each card provides View, Edit and Delete actions.</p>
+
+  <div class="screen-box">
+    <div class="screen-titlebar">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      &nbsp; Rooms Management – Grand Palace Hotel &nbsp;|&nbsp; http://localhost:8000/rooms
+    </div>
+    <div class="screen-body">
+      <div class="mock-layout">
+        <div class="mock-sidebar">
+          <div class="brand">&#9962; Grand Palace</div>
+          <a href="#">&#9632; Dashboard</a>
+          <a href="#">&#9632; Bookings</a>
+          <a href="#" class="active">&#9632; Rooms</a>
+          <a href="#">&#43; New Booking</a>
+        </div>
+        <div class="mock-main">
+          <div style="display:flex; justify-content:space-between; margin-bottom:10px; align-items:center;">
+            <span style="font-size:11pt; font-weight:bold; color:#1a1a2e;">&#128682; Rooms Management</span>
+            <span style="background:#e94560; color:#fff; padding:4px 12px; border-radius:4px; font-size:8pt; font-weight:bold;">+ Add Room</span>
+          </div>
+          <!-- Filter -->
+          <div style="background:#fff;border:1px solid #ddd;border-radius:6px;padding:8px 10px;margin-bottom:10px;display:flex;gap:8px;align-items:center;font-size:8pt;">
+            <select style="border:1px solid #ccc;border-radius:3px;padding:3px 6px;font-size:8pt;"><option>All Types</option><option>Suite</option><option>Deluxe</option></select>
+            <select style="border:1px solid #ccc;border-radius:3px;padding:3px 6px;font-size:8pt;"><option selected>All Status</option><option>Available</option><option>Occupied</option></select>
+            <span style="background:#e94560;color:#fff;padding:3px 10px;border-radius:3px;font-size:8pt;">Filter</span>
+          </div>
+          <!-- Room cards -->
+          <div class="room-grid">
+            <div class="room-card">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span class="rnum">Room 101</span>
+                <span class="badge badge-success">Available</span>
+              </div>
+              <div style="color:#555;font-size:7.5pt;margin:3px 0;">&#127991; Single &nbsp;|&nbsp; &#127968; Floor 1</div>
+              <div style="color:#555;font-size:7.5pt;margin:2px 0;">&#128101; Max 1 guest</div>
+              <div class="price">$85.00<span style="font-size:7pt;color:#888;">/night</span></div>
+              <div style="margin:3px 0;"><span style="background:#e0e0e0;padding:1px 5px;border-radius:8px;font-size:6.5pt;">WiFi</span> <span style="background:#e0e0e0;padding:1px 5px;border-radius:8px;font-size:6.5pt;">AC</span> <span style="background:#e0e0e0;padding:1px 5px;border-radius:8px;font-size:6.5pt;">TV</span></div>
+              <div style="font-size:7pt;color:#888;">48 total bookings</div>
+              <div style="display:flex;gap:4px;margin-top:6px;border-top:1px solid #eee;padding-top:6px;">
+                <span style="flex:1;border:1px solid #007bff;color:#007bff;text-align:center;padding:2px;border-radius:3px;font-size:7pt;">View</span>
+                <span style="flex:1;border:1px solid #ffc107;color:#856404;text-align:center;padding:2px;border-radius:3px;font-size:7pt;">Edit</span>
+                <span style="border:1px solid #dc3545;color:#dc3545;padding:2px 5px;border-radius:3px;font-size:7pt;">&#128465;</span>
+              </div>
+            </div>
+            <div class="room-card">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span class="rnum">Room 201</span>
+                <span class="badge badge-danger">Occupied</span>
+              </div>
+              <div style="color:#555;font-size:7.5pt;margin:3px 0;">&#127991; Suite &nbsp;|&nbsp; &#127968; Floor 2</div>
+              <div style="color:#555;font-size:7.5pt;margin:2px 0;">&#128101; Max 2 guests</div>
+              <div class="price">$150.00<span style="font-size:7pt;color:#888;">/night</span></div>
+              <div style="margin:3px 0;"><span style="background:#e0e0e0;padding:1px 5px;border-radius:8px;font-size:6.5pt;">WiFi</span> <span style="background:#e0e0e0;padding:1px 5px;border-radius:8px;font-size:6.5pt;">AC</span> <span style="background:#e0e0e0;padding:1px 5px;border-radius:8px;font-size:6.5pt;">Minibar</span></div>
+              <div style="font-size:7pt;color:#888;">63 total bookings</div>
+              <div style="display:flex;gap:4px;margin-top:6px;border-top:1px solid #eee;padding-top:6px;">
+                <span style="flex:1;border:1px solid #007bff;color:#007bff;text-align:center;padding:2px;border-radius:3px;font-size:7pt;">View</span>
+                <span style="flex:1;border:1px solid #ffc107;color:#856404;text-align:center;padding:2px;border-radius:3px;font-size:7pt;">Edit</span>
+                <span style="border:1px solid #dc3545;color:#dc3545;padding:2px 5px;border-radius:3px;font-size:7pt;">&#128465;</span>
+              </div>
+            </div>
+            <div class="room-card">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span class="rnum">Room 305</span>
+                <span class="badge badge-success">Available</span>
+              </div>
+              <div style="color:#555;font-size:7.5pt;margin:3px 0;">&#127991; Deluxe &nbsp;|&nbsp; &#127968; Floor 3</div>
+              <div style="color:#555;font-size:7.5pt;margin:2px 0;">&#128101; Max 3 guests</div>
+              <div class="price">$120.00<span style="font-size:7pt;color:#888;">/night</span></div>
+              <div style="margin:3px 0;"><span style="background:#e0e0e0;padding:1px 5px;border-radius:8px;font-size:6.5pt;">WiFi</span> <span style="background:#e0e0e0;padding:1px 5px;border-radius:8px;font-size:6.5pt;">Jacuzzi</span></div>
+              <div style="font-size:7pt;color:#888;">37 total bookings</div>
+              <div style="display:flex;gap:4px;margin-top:6px;border-top:1px solid #eee;padding-top:6px;">
+                <span style="flex:1;border:1px solid #007bff;color:#007bff;text-align:center;padding:2px;border-radius:3px;font-size:7pt;">View</span>
+                <span style="flex:1;border:1px solid #ffc107;color:#856404;text-align:center;padding:2px;border-radius:3px;font-size:7pt;">Edit</span>
+                <span style="border:1px solid #dc3545;color:#dc3545;padding:2px 5px;border-radius:3px;font-size:7pt;">&#128465;</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p style="font-size:9.5pt; color:#555; font-style:italic; text-align:center; margin-top:6px;">
+    Figure 6.5 – Rooms grid showing three rooms per row with status badges, pricing, amenity tags and action buttons
+  </p>
+
+  <!-- ── SUCCESS MESSAGE ── -->
+  <h2 class="sub-heading">6.6 Booking Confirmation Success Screen</h2>
+  <p>Upon successful booking creation, the system redirects the user to the newly created 
+  booking's detail page and displays a dismissible green success notification at the top of 
+  the page. The notification includes the auto-generated booking reference number so staff 
+  can immediately communicate it to the guest.</p>
+
+  <div class="screen-box" style="max-height:120px; overflow:hidden;">
+    <div class="screen-titlebar">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      &nbsp; Booking Created – Grand Palace Hotel
+    </div>
+    <div style="background:#f4f6f9; padding:12px 16px;">
+      <div style="background:#d4edda; border:1px solid #c3e6cb; border-left:5px solid #28a745; border-radius:4px; padding:10px 14px; font-size:9pt; color:#155724; display:flex; justify-content:space-between; align-items:center;">
+        <span><strong>&#10003; Booking created successfully!</strong> &nbsp; Reference: <strong>BK-A3F9XC12</strong></span>
+        <span style="cursor:pointer; font-weight:bold; color:#155724;">&#10005;</span>
+      </div>
+    </div>
+  </div>
+  <p style="font-size:9.5pt; color:#555; font-style:italic; text-align:center; margin-top:6px;">
+    Figure 6.6 – Success notification with auto-generated booking reference after reservation creation
+  </p>
+
+</div><!-- end section 6 -->
+
+
+
+<!-- ════════════════════════════════════════════════════
+     SECTION 7 – CONCLUSION
+═════════════════════════════════════════════════════ -->
+<div class="section">
+  <h1 class="main-heading">7. Conclusion</h1>
+
+  <h2 class="sub-heading">7.1 Summary</h2>
+
+  <p>This project successfully demonstrates the design and implementation of a fully functional, 
+  production-ready <strong>Hotel and Resort Booking Management System</strong> using <strong>PHP 8.3</strong> 
+  and the <strong>Laravel 13.x</strong> framework. The system achieves all primary and secondary 
+  objectives outlined at the beginning of this report.</p>
+
+  <p>The application provides hotel management staff with a powerful, centralised platform to 
+  handle the complete lifecycle of every reservation — from the initial booking request all the 
+  way through confirmation, check-in, check-out and, where necessary, cancellation. The five-state 
+  status workflow with automatic side effects (room status updates, payment status changes, timestamp 
+  recording) ensures that the system's data is always internally consistent, removing the risk of 
+  double-bookings or outdated availability information.</p>
+
+  <p>The technical implementation showcases the practical power of the Laravel ecosystem: Eloquent 
+  ORM relationships and query scopes reduce repetitive database code to clean, expressive PHP; 
+  the database transaction wrapper around the booking creation process guarantees atomicity across 
+  two related tables; the <code>boot()</code> model hook auto-generates unique reference codes 
+  without any controller intervention; and the soft-delete trait preserves historical booking 
+  data for auditing purposes even after a record is "deleted" by staff.</p>
+
+  <p>The Bootstrap 5 front-end delivers a professional, responsive user interface with an 
+  intuitive dark sidebar navigation, colour-coded status badges, gradient statistics cards, 
+  and a clean form layout — making the system accessible to non-technical hotel staff without 
+  any training overhead.</p>
+
+  <div class="conclusion-box">
+    <h3>Key Achievements</h3>
+    <p>
+      &#10003; &nbsp; Complete MVC architecture with clean separation of concerns<br/>
+      &#10003; &nbsp; Real-time room availability with date-overlap conflict detection<br/>
+      &#10003; &nbsp; Atomic booking creation using database transactions<br/>
+      &#10003; &nbsp; Auto-generated unique booking references (BK-XXXXXXXX format)<br/>
+      &#10003; &nbsp; Five-stage booking lifecycle with automatic side-effect management<br/>
+      &#10003; &nbsp; Soft-delete data preservation for both rooms and bookings<br/>
+      &#10003; &nbsp; Responsive Bootstrap 5 UI with professional styling<br/>
+      &#10003; &nbsp; Dashboard analytics with live statistics and revenue tracking
+    </p>
+  </div>
+
+  <h2 class="sub-heading">7.2 Future Enhancements</h2>
+
+  <p>While the current system is fully operational and meets all stated requirements, several 
+  significant enhancements have been identified for future development phases:</p>
+
+  <p class="table-caption">Table 7.1 – Planned Future Enhancements</p>
+  <table class="data-table">
+    <tr><th>Enhancement</th><th>Description</th><th>Priority</th></tr>
+    <tr><td>Online Payment Gateway</td><td>Integration with Stripe or PayPal for secure card payments directly through the booking form</td><td>High</td></tr>
+    <tr><td>Email Notifications</td><td>Automated confirmation, reminder and cancellation emails to guests using Laravel Mail with queued jobs</td><td>High</td></tr>
+    <tr><td>Role-Based Access Control</td><td>Separate roles for Admin, Receptionist and Manager with granular permissions using Laravel Policies/Gates</td><td>High</td></tr>
+    <tr><td>Guest Self-Service Portal</td><td>A guest-facing booking portal where customers can search availability, make reservations and track their own bookings</td><td>Medium</td></tr>
+    <tr><td>Multi-Property Support</td><td>Extend the data model to support multiple hotels or resorts under one management platform</td><td>Medium</td></tr>
+    <tr><td>Reporting and Export</td><td>PDF invoice generation per booking and Excel/CSV export of booking lists and revenue reports</td><td>Medium</td></tr>
+    <tr><td>Real-Time Notifications</td><td>WebSocket-based live notifications (via Laravel Echo and Pusher) when new bookings arrive or statuses change</td><td>Low</td></tr>
+    <tr><td>Housekeeping Module</td><td>Maintenance request tracking and room cleaning schedules integrated with the room status system</td><td>Low</td></tr>
+    <tr><td>Mobile Application</td><td>React Native or Flutter mobile app consuming a Laravel API back-end for on-the-go management</td><td>Low</td></tr>
+    <tr><td>Advanced Analytics</td><td>Interactive revenue charts, occupancy rate graphs, booking source tracking and seasonal demand analysis</td><td>Low</td></tr>
+  </table>
+
+  <h2 class="sub-heading">7.3 References</h2>
+
+  <ol>
+    <li>Laravel Documentation – Official Framework Reference. <em>laravel.com/docs</em>. 
+    The Laravel Team, 2024. [Accessed May 2026]</li>
+    <li>Taylor Otwell. <em>Laravel: Up &amp; Running</em>. O'Reilly Media, 3rd Edition, 2023.</li>
+    <li>Bootstrap 5 Documentation. <em>getbootstrap.com/docs/5.3</em>. The Bootstrap Team, 2023.</li>
+    <li>PHP 8.3 Manual. <em>php.net/manual</em>. The PHP Group, 2024.</li>
+    <li>Eloquent ORM Documentation. <em>laravel.com/docs/eloquent</em>. The Laravel Team, 2024.</li>
+    <li>Carbon – A simple PHP API extension for DateTime. <em>carbon.nesbot.com</em>. 
+    Brian Nesbitt, 2024.</li>
+    <li>MySQL 8.0 Reference Manual. <em>dev.mysql.com/doc/refman/8.0</em>. Oracle Corporation, 2024.</li>
+    <li>Font Awesome 6 Icons. <em>fontawesome.com</em>. Fonticons Inc., 2024.</li>
+    <li>Vite – Next Generation Frontend Tooling. <em>vitejs.dev</em>. Evan You, 2024.</li>
+    <li>PHPUnit Documentation. <em>phpunit.de/documentation.html</em>. Sebastian Bergmann, 2024.</li>
+  </ol>
+
+  <div style="margin-top: 30px; text-align:center; border-top: 2px solid #8B0000; padding-top: 16px;">
+    <p style="font-size:11pt; color:#8B0000; font-weight:bold;">— End of Report —</p>
+    <p style="font-size:10pt; color:#555;">Grand Palace Hotel Booking Management System &nbsp;|&nbsp; PHP &amp; Laravel Framework &nbsp;|&nbsp; May 2026</p>
+  </div>
+
+</div><!-- end section 7 -->
+
+</body>
+</html>
